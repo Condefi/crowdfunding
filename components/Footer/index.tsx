@@ -1,12 +1,12 @@
 "use client";
 
+import { Github, Linkedin, Twitter } from "lucide-react";
 import MainLogo from "../ui/logo";
-import { Github, Twitter, Linkedin } from "lucide-react";
 
 const Footer = () => {
   return (
     <footer className="bg-transparent">
-      <div className=" px-8 py-8 md:flex md:items-center md:justify-between">
+      <div className=" px-8 pb-8 pt-12 md:flex md:items-center md:justify-between">
         <div className="flex justify-center space-x-6 md:order-2">
           <div className="flex flex-row gap-4">
             <Github className="w-5 h-5 text-gray-400" />

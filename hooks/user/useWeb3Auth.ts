@@ -1,36 +1,21 @@
-import { kintoSDK } from "@/lib/kintoSDK";
-import Web3AuthConnectorInstance from "@/lib/web3auth";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAccount, useConnect } from "wagmi";
-import { mainnet } from "wagmi/chains";
 
 export const useWeb3Auth = () => {
-  const queryClient = useQueryClient();
-  const { connect } = useConnect();
   const { isConnected } = useAccount();
+  const { connect, connectors } = useConnect();
 
-  const { mutateAsync: handleWeb3AuthConnect } = useMutation({
-    mutationFn: async () => {
-      try {
-        // Connect using Web3Auth connector instance
-        const connector = connect({
-          connector: Web3AuthConnectorInstance([mainnet]),
-        });
+  const connectWallet = () => {
+    // Find the Web3Auth connector
+    const web3AuthConnector = connectors.find((c) => c.name === "Web3Auth");
 
-        await connector;
-        return await kintoSDK.connect();
-      } catch (error) {
-        console.error("Failed to connect with Web3Auth:", error);
-        throw error;
-      }
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["kintoUserInfo"] });
-    },
-  });
+    if (web3AuthConnector) {
+      connect({ connector: web3AuthConnector });
+    }
+  };
 
   return {
     isConnected,
-    handleWeb3AuthConnect,
+    connect: connectWallet,
+    connectors,
   };
 };

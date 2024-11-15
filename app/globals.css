@@ -30,7 +30,7 @@ body {
     --destructive: 5 72% 54%; /* Crimson Red - #E74C3C */
     --destructive-foreground: 0 0% 98%; /* Ivory White */
     --border: 210 15% 85%; /* Light border color for subtle separations */
-    --input: 220 12% 95%; /* Matches background */
+    --input: 216 12% 84%; /* gray-300 */
     --ring: 215 42% 25%; /* Deep Navy */
     --chart-1: 215 42% 25%; /* Deep Navy */
     --chart-2: 210 20% 36%; /* Slate Blue */

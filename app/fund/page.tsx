@@ -1,58 +1,43 @@
-import Property1 from "@/assets/properties/property-1.avif";
-import Property2 from "@/assets/properties/property-2.avif";
-import PropertyCard from "@/components/PropertyCard";
-import { CampaignProperties } from "@/types/property";
+"use client";
+
+import ActiveCampaigns from "@/components/Campaigns/ActiveCampaigns";
+import DiscoverCampaigns from "@/components/Campaigns/DiscoverCampaigns";
+import PastCampaigns from "@/components/Campaigns/PastCampaigns";
+import { motion } from "framer-motion";
+import { useEffect } from "react";
 
 export default function Fund() {
-  const currentCampaigns: CampaignProperties = [
-    {
-      id: 1,
-      imageUrl: Property1.src,
-      title: "Property 1",
-      status: "Active",
-      amountRaised: 10000,
-      investors: 100,
-      endDate: "2024-12-31",
-      progress: 50,
-    },
-  ];
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
-  const pastCampaigns: CampaignProperties = [
-    {
-      id: 2,
-      imageUrl: Property2.src,
-      title: "Property 2",
-      status: "Completed",
-      amountRaised: 20000,
-      investors: 150,
-      endDate: "2023-12-31",
-      progress: 100,
-    },
-  ];
+  const staggerDelay = 0.2;
 
   return (
-    <div className="relative min-h-screen pt-24 px-8 space-y-12">
-      <section>
-        <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
-          Current Campaigns
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {currentCampaigns.map((campaign) => (
-            <PropertyCard key={campaign.id} {...campaign} />
-          ))}
-        </div>
-      </section>
+    <div className="relative min-h-screen pt-24 px-8 flex flex-col gap-12">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <DiscoverCampaigns />
+      </motion.div>
 
-      <section>
-        <h2 className="text-2xl font-semibold mb-6 text-gray-900 dark:text-gray-100">
-          Past Campaigns
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-          {pastCampaigns.map((campaign) => (
-            <PropertyCard key={campaign.id} {...campaign} />
-          ))}
-        </div>
-      </section>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: staggerDelay * 2 }}
+      >
+        <ActiveCampaigns />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: staggerDelay * 3 }}
+      >
+        <PastCampaigns />
+      </motion.div>
     </div>
   );
 }

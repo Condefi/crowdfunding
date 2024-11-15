@@ -1,7 +1,7 @@
 // App
 import { appRoutes } from "@/lib/constants";
 import { motion } from "framer-motion";
-import { Coins, Info, ShoppingBag } from "lucide-react";
+import { Coins, LayoutGridIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
@@ -32,19 +32,11 @@ const Navbar = () => {
     },
     {
       id: 65743534,
-      path: appRoutes.marketplace,
-      parentRoute: "marketplace", // Changed to lowercase to match URL path
+      path: appRoutes.dashboard,
+      parentRoute: "dashboard",
       isDisabled: false,
-      title: "Marketplace",
-      icon: <ShoppingBag className="max-w-full" />,
-    },
-    {
-      id: 981283882,
-      path: appRoutes.about,
-      parentRoute: "about", // Changed to lowercase to match URL path
-      isDisabled: false,
-      title: "About",
-      icon: <Info className="max-w-full" />,
+      title: "Dashboard",
+      icon: <LayoutGridIcon className="max-w-full" />,
     },
   ];
 
