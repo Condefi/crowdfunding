@@ -41,3 +41,7 @@ export const hexToHSL = (hex: string): { h: number; s: number; l: number } => {
     l: Math.round(l * 100),
   };
 };
+
+export const truncateAddress = (address: string) => {
+  return `${address.slice(0, 6)}....${address.slice(-4)}`;
+};

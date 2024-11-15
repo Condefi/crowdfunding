@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import useDarkMode from "@/hooks/useDarkMode";
+import useDarkMode from "@/hooks/app/useDarkMode";
 import { Moon, Sun } from "lucide-react";
 
 const ThemeSwitch = () => {
