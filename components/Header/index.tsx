@@ -1,20 +1,19 @@
 "use client";
 
-import { createKintoSDK } from "kinto-web-sdk";
-import { useEffect, useState } from "react";
-
 import { cn } from "@/lib/utils";
-import { useMediaQuery } from "usehooks-ts";
+import { createKintoSDK, KintoAccountInfo } from "kinto-web-sdk";
+import { useEffect, useState } from "react";
 import Navbar from "../Navbar";
 import ThemeSwitch from "../ThemeSwitch";
 import { HoverBorderGradient } from "../ui/hover-border-gradient";
 import MainLogo from "../ui/logo";
-const appAddress = "0xF4c03194BB7231ce0151134764EedF93F6d896B8";
-const kintoSDK = createKintoSDK(appAddress);
 
 const Header = () => {
-  const isMobile = useMediaQuery("(max-width: 768px)");
   const [showHeader, setShowHeader] = useState(true);
+  const [accountInfo, setAccountInfo] = useState<KintoAccountInfo | undefined>(
+    undefined
+  );
+  const kintoSDK = createKintoSDK("0x14A1EC9b43c270a61cDD89B6CbdD985935D897fE");
 
   useEffect(() => {
     const handleScroll = () => {
@@ -26,15 +25,25 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const handleConnect = () => {
-    kintoSDK
-      .connect()
-      .then(() => {
-        console.log("New wallet created successfully");
-      })
-      .catch((error) => {
-        console.error("Failed to create new wallet:", error);
-      });
+  useEffect(() => {
+    fetchAccountInfo();
+  }, []);
+
+  const fetchAccountInfo = async () => {
+    try {
+      setAccountInfo(await kintoSDK.connect());
+    } catch (error) {
+      console.error("Failed to fetch account info:", error);
+    }
+  };
+
+  const handleConnect = async () => {
+    try {
+      await kintoSDK.createNewWallet();
+      await fetchAccountInfo();
+    } catch (error) {
+      console.error("Failed to create new wallet:", error);
+    }
   };
 
   return (
@@ -56,7 +65,12 @@ const Header = () => {
             onClick={() => handleConnect()}
           >
             <a className="w-auto text-primary z-10 bg-background px-2 sm:px-4 py-2 rounded-[inherit]">
-              Connect Wallet
+              {accountInfo?.walletAddress
+                ? `${accountInfo.walletAddress.slice(
+                    0,
+                    4
+                  )}...${accountInfo.walletAddress.slice(-4)}`
+                : "Connect Wallet"}
             </a>
           </HoverBorderGradient>
         </div>
