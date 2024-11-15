@@ -1,7 +1,7 @@
 // App
 import { appRoutes } from "@/lib/constants";
 import { motion } from "framer-motion";
-import { Coins, ExternalLink, ShoppingBag, Info } from "lucide-react";
+import { Coins, Info, ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { ReactNode } from "react";
@@ -45,8 +45,6 @@ const Navbar = () => {
       isDisabled: false,
       title: "About",
       icon: <Info className="max-w-full" />,
-      postfix: <ExternalLink className="w-3 h-3" />,
-      externalRoute: appRoutes.about,
     },
   ];
 
