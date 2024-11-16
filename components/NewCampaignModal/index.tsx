@@ -7,15 +7,17 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { v4 as uuidv4 } from "uuid";
-
 import { cn } from "@/lib/utils";
 import { useCampaignsStore } from "@/state/useCampaignsStore";
 import { Campaign } from "@/types/campaign";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { v4 as uuidv4 } from "uuid";
+import { useChainId } from "wagmi";
+
+import { useTreasuryCreation } from "@/hooks/user/useDeposit";
 import { Calendar } from "../ui/calendar";
 import ImageInputPreview from "../ui/image-input-preview";
 import { Input } from "../ui/input";
@@ -28,27 +30,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { useChainId, useWriteContract } from "wagmi";
-import { factories, usdc } from "../../lib/clients/treasury-factory";
-import * as MockTreasuryFactory from "../../lib/abis/MockTreasuryFactory.json";
-import * as IERC20 from "../../lib/abis/IERC20.json";
 
 const NewCampaignModal = () => {
-  const { writeContractAsync } = useWriteContract();
   const chainId = useChainId();
   const router = useRouter();
   const initialFormState = {
     title: "",
     imageUrl: "",
     status: "Active",
-    amountRaised: "",
-    investors: "",
-    endDate: "",
+    amountRaised: BigInt(0),
+    amountToRaise: BigInt(0),
+    endDate: BigInt(0),
     progress: "",
     propertyType: "",
     location: "",
-    minInvestment: "",
-    term: "",
+    minInvestment: BigInt(0),
     type: "user" as const,
   };
 
@@ -59,56 +55,40 @@ const NewCampaignModal = () => {
   const { addCampaign } = useCampaignsStore();
   const [open, setOpen] = useState(false);
 
+  const {
+    handleApproval,
+    isWaitingForApproval,
+    isWaitingForTreasury,
+    approvalReceipt,
+    treasuryReceipt,
+  } = useTreasuryCreation({
+    minInvestment: formData.minInvestment ?? BigInt(0),
+    endDate: formData.endDate ?? BigInt(0),
+    chainId,
+  });
+
+  useEffect(() => {
+    if (isWaitingForTreasury && treasuryReceipt) {
+      const newCampaign = {
+        id: uuidv4(),
+        ...formData,
+      } as Campaign;
+
+      addCampaign(newCampaign);
+      setFormData(initialFormState);
+      setCurrentStep(1);
+      setOpen(false);
+      router.push(`/fund/${newCampaign.id}`);
+    }
+  }, [treasuryReceipt, isWaitingForTreasury]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
       return;
     }
-    const newCampaign = {
-      id: uuidv4(),
-      ...formData,
-    } as Campaign;
-
-    try {
-      const result = await writeContractAsync({
-        abi: IERC20,
-        address: usdc[chainId],
-        functionName: "approve",
-        args: [
-          factories[chainId],
-          BigInt(2) * BigInt(newCampaign.minInvestment),
-        ],
-      });
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-
-    try {
-      const result = await writeContractAsync({
-        abi: MockTreasuryFactory,
-        address: factories[chainId],
-        functionName: "createTreasury",
-        args: [
-          newCampaign.minInvestment,
-          newCampaign.endDate,
-          [usdc[chainId]],
-          usdc,
-          newCampaign.minInvestment,
-        ],
-      });
-      console.log(result);
-    } catch (e) {
-      console.error(e);
-    }
-
-    addCampaign(newCampaign);
-    setFormData(initialFormState);
-    setCurrentStep(1);
-    setOpen(false);
-
-    router.push(`/fund/${newCampaign.id}`);
+    await handleApproval();
   };
 
   const handleInputChange = (
@@ -119,6 +99,15 @@ const NewCampaignModal = () => {
       ...prev,
       [name]: value,
     }));
+  };
+
+  const handleDateInputChange = (date: Date | undefined) => {
+    if (date) {
+      const unixTimestamp = BigInt(Math.floor(date.getTime() / 1000));
+      setFormData((prev) => ({ ...prev, endDate: unixTimestamp }));
+    } else {
+      setFormData((prev) => ({ ...prev, endDate: undefined }));
+    }
   };
 
   const renderStep = () => {
@@ -139,22 +128,58 @@ const NewCampaignModal = () => {
             />
             <Input
               type="text"
-              name="amountRaised"
-              placeholder="Amount Raised"
+              name="minInvestment"
+              placeholder="Minimum Investment"
               value={
-                formData.amountRaised?.toString().replace(/[^\d]/g, "") || ""
+                formData.minInvestment && formData.minInvestment > BigInt(0)
+                  ? formData.minInvestment.toString().replace(/[^\d]/g, "")
+                  : ""
               }
               onChange={handleInputChange}
               className="w-full p-2 rounded-lg border border-gray-300 dark:border-neutral-700"
             />
             <Input
               type="text"
-              name="investors"
-              placeholder="Investors"
-              value={formData.investors?.toString().replace(/[^\d]/g, "") || ""}
+              name="amountToRaise"
+              placeholder="Amount to Raise"
+              value={
+                formData.amountToRaise && formData.amountToRaise > BigInt(0)
+                  ? formData.amountToRaise.toString().replace(/[^\d]/g, "")
+                  : ""
+              }
               onChange={handleInputChange}
               className="w-full p-2 rounded-lg border border-gray-300 dark:border-neutral-700"
             />
+            <Popover>
+              <PopoverTrigger asChild>
+                <Button
+                  variant={"outline"}
+                  className={cn(
+                    "w-full justify-start text-left font-normal",
+                    !formData.endDate && "text-accent"
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {formData.endDate ? (
+                    format(new Date(Number(formData.endDate) * 1000), "PPP")
+                  ) : (
+                    <span>Pick a end date</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0">
+                <Calendar
+                  mode="single"
+                  selected={
+                    formData.endDate
+                      ? new Date(Number(formData.endDate) * 1000)
+                      : undefined
+                  }
+                  onSelect={handleDateInputChange}
+                  initialFocus
+                />
+              </PopoverContent>
+            </Popover>
           </div>
         );
       case 2:
@@ -197,56 +222,6 @@ const NewCampaignModal = () => {
                 <SelectItem value="new-york">New York</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              name="term"
-              value={formData.term}
-              onValueChange={(value) =>
-                handleInputChange({ target: { name: "term", value } } as any)
-              }
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select Term" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="short">Short Term</SelectItem>
-                <SelectItem value="long">Long Term</SelectItem>
-              </SelectContent>
-            </Select>
-            <Popover>
-              <PopoverTrigger asChild>
-                <Button
-                  variant={"outline"}
-                  className={cn(
-                    "w-full justify-start text-left font-normal",
-                    !formData.endDate && "text-gray-500"
-                  )}
-                >
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {formData.endDate ? (
-                    format(new Date(formData.endDate), "PPP")
-                  ) : (
-                    <span>Pick a date</span>
-                  )}
-                </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-auto p-0">
-                <Calendar
-                  mode="single"
-                  selected={
-                    formData.endDate ? new Date(formData.endDate) : undefined
-                  }
-                  onSelect={(date) =>
-                    handleInputChange({
-                      target: {
-                        name: "endDate",
-                        value: date ? date.toISOString() : "",
-                      },
-                    } as any)
-                  }
-                  initialFocus
-                />
-              </PopoverContent>
-            </Popover>
             <ImageInputPreview
               file={formData.imageUrl ? new File([], "") : null}
               onFileChange={(file) => {

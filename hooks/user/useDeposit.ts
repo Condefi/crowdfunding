@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
 import { Address, erc20Abi } from "viem";
 import {
+  useAccount,
   useSendTransaction,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
 import { arbitrum } from "wagmi/chains";
+import * as MockTreasuryFactory from "../../lib/abis/MockTreasuryFactory.json";
+import { factories, usdc } from "../../lib/clients/treasury-factory";
 
 interface UseCrowdfundingDepositProps {
   vaultAddress: Address;
   tokenAddress: Address;
   amount: string;
   receiverAddress: Address;
+}
+
+interface UseTreasuryCreationProps {
+  minInvestment: bigint;
+  endDate: bigint;
+  chainId: number;
 }
 
 export function useCrowdfundingDeposit({
@@ -98,5 +107,87 @@ export function useCrowdfundingDeposit({
     isWaitingForDeposit,
     allowanceReceipt,
     depositReceipt,
+  };
+}
+
+export function useTreasuryCreation({
+  minInvestment,
+  endDate,
+  chainId,
+}: UseTreasuryCreationProps) {
+  const [approvalHash, setApprovalHash] = useState<Address | undefined>();
+  const [treasuryHash, setTreasuryHash] = useState<Address | undefined>();
+  const [isWaitingForApproval, setIsWaitingForApproval] = useState(false);
+  const [isWaitingForTreasury, setIsWaitingForTreasury] = useState(false);
+  const { address } = useAccount();
+
+  const { writeContractAsync } = useWriteContract();
+
+  const { data: approvalReceipt } = useWaitForTransactionReceipt({
+    hash: approvalHash,
+  });
+
+  const { data: treasuryReceipt } = useWaitForTransactionReceipt({
+    hash: treasuryHash,
+  });
+
+  useEffect(() => {
+    if (isWaitingForApproval && approvalReceipt) {
+      handleCreateTreasury();
+      setIsWaitingForApproval(false);
+      setApprovalHash(undefined);
+    }
+  }, [approvalReceipt, isWaitingForApproval]);
+
+  const handleApproval = async () => {
+    try {
+      const approvalAmount = BigInt(2) * BigInt(minInvestment);
+
+      if (!factories[chainId] || !usdc[chainId]) {
+        throw new Error("Invalid chain ID or missing contract addresses");
+      }
+
+      const approval = await writeContractAsync({
+        abi: erc20Abi,
+        address: usdc[chainId] as Address,
+        functionName: "approve",
+        args: [address as Address, approvalAmount],
+      });
+
+      setApprovalHash(approval);
+      setIsWaitingForApproval(true);
+    } catch (error) {
+      console.error("Approval failed:", error);
+      setIsWaitingForApproval(false);
+      setApprovalHash(undefined);
+      throw error;
+    }
+  };
+
+  const handleCreateTreasury = async () => {
+    try {
+      const treasury = await writeContractAsync({
+        abi: MockTreasuryFactory,
+        address: factories[chainId],
+        functionName: "createTreasury",
+        args: [minInvestment, endDate, [usdc[chainId]], usdc, minInvestment],
+      });
+
+      setTreasuryHash(treasury);
+      setIsWaitingForTreasury(true);
+    } catch (error) {
+      console.error("Treasury creation failed:", error);
+      setIsWaitingForTreasury(false);
+      setTreasuryHash(undefined);
+      throw error;
+    }
+  };
+
+  return {
+    handleApproval,
+    isWaitingForApproval,
+    isWaitingForTreasury,
+    approvalReceipt,
+    treasuryReceipt,
   };
 }

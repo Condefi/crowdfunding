@@ -21,8 +21,8 @@ const Deposit = ({ campaign }: { campaign: Campaign }) => {
           <div className="relative">
             <Input
               type="number"
-              min={campaign?.minInvestment}
-              defaultValue={campaign?.minInvestment}
+              min={BigInt(campaign?.minInvestment).toString()}
+              defaultValue={BigInt(campaign?.minInvestment).toString()}
             />
           </div>
         </div>

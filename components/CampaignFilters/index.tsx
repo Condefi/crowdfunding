@@ -5,7 +5,6 @@ import {
   priceRangeAtom,
   propertyTypeAtom,
   searchAtom,
-  termAtom,
 } from "@/atoms/discoverAtoms";
 import { Input } from "@/components/ui/input";
 import {
@@ -22,7 +21,7 @@ const CampaignFilters = () => {
   const [priceRange, setPriceRange] = useAtom(priceRangeAtom);
   const [propertyType, setPropertyType] = useAtom(propertyTypeAtom);
   const [location, setLocation] = useAtom(locationAtom);
-  const [term, setTerm] = useAtom(termAtom);
+
   const [search, setSearch] = useAtom(searchAtom);
 
   const placeholders = [
@@ -104,20 +103,6 @@ const CampaignFilters = () => {
               <SelectItem value="miami">Miami</SelectItem>
               <SelectItem value="los-angeles">Los Angeles</SelectItem>
               <SelectItem value="chicago">Chicago</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-
-        <div>
-          <Select value={term} onValueChange={setTerm}>
-            <SelectTrigger className="h-12 w-full text-primary lg:whitespace-nowrap">
-              <SelectValue placeholder="Select term" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Terms</SelectItem>
-              <SelectItem value="short">Short Term (1-2 years)</SelectItem>
-              <SelectItem value="medium">Medium Term (3-5 years)</SelectItem>
-              <SelectItem value="long">Long Term (5+ years)</SelectItem>
             </SelectContent>
           </Select>
         </div>
