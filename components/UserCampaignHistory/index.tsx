@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { cn } from "@/lib/utils";
 import { Campaign } from "@/types/campaign";
 import Link from "next/link";
 import { CampaignStatus } from "../ui/campaign-status";
@@ -52,18 +53,19 @@ const UserCampaignHistory = ({
             {pastUserCampaigns.map((campaign: Campaign, index) => (
               <TableRow
                 key={campaign.id}
-                className={`bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600/20 cursor-pointer ${
+                className={cn(
+                  "bg-white dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-600/20 cursor-pointer",
                   index === pastUserCampaigns.length - 1
                     ? "last:rounded-b-xl"
                     : ""
-                }`}
+                )}
               >
                 <TableCell
-                  className={`${
+                  className={cn(
                     index === pastUserCampaigns.length - 1
                       ? "first:rounded-bl-xl"
                       : ""
-                  }`}
+                  )}
                 >
                   <Link href={`/fund/${campaign.id}`}>{campaign.title}</Link>
                 </TableCell>
@@ -72,11 +74,11 @@ const UserCampaignHistory = ({
                   <CampaignStatus status={campaign.status} />
                 </TableCell>
                 <TableCell
-                  className={`${
+                  className={cn(
                     index === pastUserCampaigns.length - 1
                       ? "last:rounded-br-xl"
                       : ""
-                  }`}
+                  )}
                 >
                   <div>{campaign.endDate}</div>
                   <div className="text-sm text-gray-500">

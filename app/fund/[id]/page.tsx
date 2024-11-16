@@ -1,7 +1,7 @@
 "use client";
 
 import PlaceholderImage from "@/assets/properties/placeholder.webp";
-import Deposit from "@/components/Deposit";
+import CampaignActions from "@/components/CampaignActions";
 import FinancialDetails from "@/components/FinancialDetails";
 import PropertyDetails from "@/components/PropertyDetails";
 import PropertyOverview from "@/components/PropertyOverview";
@@ -16,6 +16,9 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
   const { allCampaigns } = useCampaignsStore();
   const campaign = allCampaigns.find((campaign) => campaign.id === id);
 
+  console.log("campaign", campaign);
+  console.log("allCampaigns", allCampaigns);
+  console.log("id", id);
   if (!campaign) {
     return <NotFound />;
   }
@@ -34,7 +37,7 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
         <div className="absolute bottom-0 left-0 right-0 z-20 p-6 bg-gradient-to-t from-black/70 to-transparent">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-[hsl(var(--gradient-start))] to-[hsl(var(--gradient-end))] bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold text-white drop-shadow-2xl">
                 {campaign?.title}
               </h1>
               <CampaignStatus status={campaign.status} size="xl" />
@@ -101,7 +104,7 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
 
           <div className="lg:col-span-1">
             <div className="sticky top-24 ">
-              <Deposit campaign={campaign} />
+              <CampaignActions campaign={campaign} />
             </div>
           </div>
         </div>
