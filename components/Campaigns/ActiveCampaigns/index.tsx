@@ -20,8 +20,8 @@ const ActiveCampaigns = () => {
 
   const filteredCampaigns = currentCampaigns?.filter((campaign) => {
     const priceInRange =
-      (!priceRange.min || campaign.minInvestment >= priceRange.min) &&
-      (!priceRange.max || campaign.minInvestment <= priceRange.max);
+      (!priceRange.min || Number(campaign.minInvestment) >= priceRange.min) &&
+      (!priceRange.max || Number(campaign.minInvestment) <= priceRange.max);
 
     const matchesPropertyType =
       propertyType === "all" || campaign.propertyType === propertyType;
