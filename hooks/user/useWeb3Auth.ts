@@ -1,15 +1,26 @@
+import AAProviderInstance from "@/lib/web3auth/AAProvider";
+import Web3AuthConnectorInstance from "@/lib/web3auth/web3auth";
 import { useAccount, useConnect } from "wagmi";
+import { base, mantle, scroll } from "wagmi/chains";
 
 export const useWeb3Auth = () => {
-  const { isConnected } = useAccount();
+  const { isConnected, connector } = useAccount();
   const { connect, connectors } = useConnect();
+  const web3AuthConnector = Web3AuthConnectorInstance([mantle, scroll, base]);
 
-  const connectWallet = () => {
-    // Find the Web3Auth connector
-    const web3AuthConnector = connectors.find((c) => c.name === "Web3Auth");
-
-    if (web3AuthConnector) {
-      connect({ connector: web3AuthConnector });
+  const connectWallet = async () => {
+    try {
+      await connect({ connector: web3AuthConnector });
+      // After connection, check if we can enable Account Abstraction
+      if (connector) {
+        const provider = (await connector.getProvider()) as any;
+        // Initialize AA provider if not already initialized
+        if (!provider.isAccountAbstractionProvider) {
+          await provider.setupProvider(AAProviderInstance);
+        }
+      }
+    } catch (error) {
+      console.error("Failed to connect wallet:", error);
     }
   };
 
@@ -17,5 +28,7 @@ export const useWeb3Auth = () => {
     isConnected,
     connect: connectWallet,
     connectors,
+    provider: connector?.getProvider(),
+    AAProviderInstance,
   };
 };

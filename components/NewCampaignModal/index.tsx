@@ -109,14 +109,6 @@ const NewCampaignModal = () => {
               onChange={handleInputChange}
               className="w-full p-2 rounded-lg border border-gray-300 dark:border-neutral-700"
             />
-            <Input
-              type="text"
-              name="progress"
-              placeholder="Progress"
-              value={formData.progress?.toString().replace(/[^\d]/g, "") || ""}
-              onChange={handleInputChange}
-              className="w-full p-2 rounded-lg border border-gray-300 dark:border-neutral-700"
-            />
           </div>
         );
       case 2:

@@ -1,5 +1,9 @@
 // Web3Auth Libraries
 import {
+  AccountAbstractionProvider,
+  SafeSmartAccount,
+} from "@web3auth/account-abstraction-provider";
+import {
   CHAIN_NAMESPACES,
   WALLET_ADAPTERS,
   WEB3AUTH_NETWORK,
@@ -12,7 +16,7 @@ import { Chain } from "wagmi/chains";
 
 export default function Web3AuthConnectorInstance(chains: Chain[]) {
   // Create Web3Auth Instance
-  const name = "My App Name";
+  const name = "Crowdfunding";
   const chainConfig = {
     chainNamespace: CHAIN_NAMESPACES.EIP155,
     chainId: "0x" + chains[0].id.toString(16),
@@ -27,10 +31,24 @@ export default function Web3AuthConnectorInstance(chains: Chain[]) {
     config: { chainConfig },
   });
 
+  const accountAbstractionProvider = new AccountAbstractionProvider({
+    config: {
+      chainConfig,
+      bundlerConfig: {
+        url: `https://api.pimlico.io/v2/11155111/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`,
+      },
+      smartAccountInit: new SafeSmartAccount(),
+      paymasterConfig: {
+        url: `https://api.pimlico.io/v2/11155111/rpc?apikey=${process.env.NEXT_PUBLIC_PIMLICO_API_KEY}`,
+      },
+    },
+  });
+
   const web3AuthInstance = new Web3Auth({
     clientId: process.env.NEXT_PUBLIC_WEB3AUTH_CLIENT_ID || "",
     chainConfig,
     privateKeyProvider,
+    accountAbstractionProvider,
     uiConfig: {
       appName: name,
       loginMethodsOrder: ["github", "google"],
@@ -38,10 +56,10 @@ export default function Web3AuthConnectorInstance(chains: Chain[]) {
       modalZIndex: "2147483647",
       logoLight: "https://web3auth.io/images/web3authlog.png",
       logoDark: "https://web3auth.io/images/web3authlogodark.png",
-      uxMode: "redirect",
+      uxMode: "popup",
       mode: "light",
     },
-    web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_MAINNET,
+    web3AuthNetwork: WEB3AUTH_NETWORK.SAPPHIRE_DEVNET,
     enableLogging: true,
   });
 
@@ -52,6 +70,7 @@ export default function Web3AuthConnectorInstance(chains: Chain[]) {
       },
     },
   });
+
   web3AuthInstance.addPlugin(walletServicesPlugin);
 
   const modalConfig = {

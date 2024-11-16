@@ -46,19 +46,21 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm p-6 mb-6">
+            <div className="bg-card rounded-xl shadow-sm p-6 mb-6 border border-input">
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <p className="text-sm text-gray-500">Target IRR</p>
-                  <p className="text-xl font-semibold">12.5%</p>
+                  <p className="text-sm text-accent">Target IRR</p>
+                  <p className="text-xl font-semibold text-foreground">12.5%</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm text-gray-500">Min Investment</p>
-                  <p className="text-xl font-semibold">$100</p>
+                  <p className="text-sm text-accent">Min Investment</p>
+                  <p className="text-xl font-semibold text-foreground">$100</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-sm text-gray-500">Property Type</p>
-                  <p className="text-xl font-semibold">Residential</p>
+                  <p className="text-sm text-accent">Property Type</p>
+                  <p className="text-xl font-semibold text-foreground">
+                    Residential
+                  </p>
                 </div>
               </div>
             </div>
@@ -78,10 +80,10 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
                   Property Details
                 </TabsTrigger>
                 <TabsTrigger
-                  value="details"
+                  value="financials"
                   className="data-[state=active]:border-b-2 data-[state=active]:border-gradient-to-r data-[state=active]:from-gradient-start data-[state=active]:to-gradient-end pb-4 -mb-px"
                 >
-                  Property Details
+                  Finacials
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="overview" className="p-6">
@@ -91,7 +93,7 @@ const CampaignPage = ({ params }: { params: { id: string } }) => {
                 <PropertyDetails />
               </TabsContent>
 
-              <TabsContent value="details" className="p-6">
+              <TabsContent value="financials" className="p-6">
                 <FinancialDetails />
               </TabsContent>
             </Tabs>
