@@ -1,5 +1,6 @@
 "use client";
 
+import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -57,7 +58,7 @@ const NewCampaignModal = () => {
       return;
     }
     addCampaign({
-      id: Date.now(),
+      id: uuidv4(),
       ...formData,
     } as Campaign);
     setFormData(initialFormState);

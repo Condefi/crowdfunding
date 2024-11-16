@@ -15,6 +15,7 @@ export interface Campaign {
   term: string;
   type?: "public" | "user";
   property?: Property;
+  chains?: Record<string, string>;
 }
 
 export type PropertyCampaigns = Campaign[];
