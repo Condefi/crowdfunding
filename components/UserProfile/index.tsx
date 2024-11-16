@@ -63,7 +63,7 @@ const WalletInfo = ({ address }: { address: string }) => {
           : "Loading..."
         : truncateAddress(address),
       tooltip: isSmartAccount
-        ? "Your Smart Contract Wallet address"
+        ? "Your Smart Account contract address"
         : "Your wallet address",
       showTooltip: true,
     },
@@ -173,7 +173,18 @@ const WalletConnected = () => {
               <p className="text-sm text-gray-500">
                 We have connected your account with Web3Auth social login and
                 integrated Smart Account. All transactions are gasless since the
-                Paymaster will cover the gas fees for your transactions.
+                Paymaster will cover the gas fees for your transactions.{" "}
+                <span
+                  className="text-blue-500 underline cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      "https://web3auth.io/docs/features/account-abstraction",
+                      "_blank"
+                    );
+                  }}
+                >
+                  Read more
+                </span>
               </p>
             </div>
           </div>

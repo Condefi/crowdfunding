@@ -1,6 +1,5 @@
 "use client";
 
-import { v4 as uuidv4 } from "uuid";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,12 +7,14 @@ import {
   DialogFooter,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { v4 as uuidv4 } from "uuid";
 
 import { cn } from "@/lib/utils";
 import { useCampaignsStore } from "@/state/useCampaignsStore";
 import { Campaign } from "@/types/campaign";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Calendar } from "../ui/calendar";
 import ImageInputPreview from "../ui/image-input-preview";
@@ -29,6 +30,7 @@ import {
 } from "../ui/select";
 
 const NewCampaignModal = () => {
+  const router = useRouter();
   const initialFormState = {
     title: "",
     imageUrl: "",
@@ -57,13 +59,16 @@ const NewCampaignModal = () => {
       setCurrentStep(currentStep + 1);
       return;
     }
-    addCampaign({
+    const newCampaign = {
       id: uuidv4(),
       ...formData,
-    } as Campaign);
+    } as Campaign;
+
+    addCampaign(newCampaign);
     setFormData(initialFormState);
     setCurrentStep(1);
     setOpen(false);
+    router.push(`/fund/${newCampaign.id}`);
   };
 
   const handleInputChange = (

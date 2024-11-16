@@ -32,6 +32,7 @@ export const useCampaignsStore = create<CampaignsState>()(
       addCampaign: (campaign) =>
         set((state) => ({
           currentCampaigns: [...state.currentCampaigns, campaign],
+          allCampaigns: [...state.allCampaigns, campaign],
         })),
 
       removeCampaign: (id) =>
