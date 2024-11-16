@@ -7,7 +7,7 @@ export interface Campaign {
   status: string;
   amountRaised: string;
   investors: string;
-  endDate: string;
+  endDate: bigint;
   progress: string;
   propertyType: string;
   location: string;

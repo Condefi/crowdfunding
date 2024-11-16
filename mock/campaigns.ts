@@ -5,6 +5,7 @@ import Property4 from "@/assets/properties/property-4.webp";
 import { Campaign } from "@/types/campaign";
 import { v4 as uuidv4 } from "uuid";
 import { properties } from "./properties";
+import { baseSepolia, scrollSepolia, mantleSepoliaTestnet } from "wagmi/chains";
 
 export const statuses = ["Active", "Failed", "Completed"] as const;
 
@@ -24,6 +25,11 @@ export const pastCampaigns: Campaign[] = [
     term: "short",
     type: "public",
     property: properties[0],
+    chains: {
+      [baseSepolia.id]: "",
+      [scrollSepolia.id]: "",
+      [mantleSepoliaTestnet.id]: "",
+    },
   },
   {
     id: uuidv4(),

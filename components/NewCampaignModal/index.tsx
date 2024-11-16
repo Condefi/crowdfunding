@@ -28,8 +28,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
+import { useChainId, useWriteContract } from "wagmi";
+import { factories, usdc } from "../../lib/clients/treasury-factory";
+import * as MockTreasuryFactory from "../../lib/abis/MockTreasuryFactory.json";
+import * as IERC20 from "../../lib/abis/IERC20.json";
 
 const NewCampaignModal = () => {
+  const { writeContractAsync } = useWriteContract();
+  const chainId = useChainId();
   const router = useRouter();
   const initialFormState = {
     title: "",
@@ -53,7 +59,7 @@ const NewCampaignModal = () => {
   const { addCampaign } = useCampaignsStore();
   const [open, setOpen] = useState(false);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
@@ -64,10 +70,44 @@ const NewCampaignModal = () => {
       ...formData,
     } as Campaign;
 
+    try {
+      const result = await writeContractAsync({
+        abi: IERC20,
+        address: usdc[chainId],
+        functionName: "approve",
+        args: [
+          factories[chainId],
+          BigInt(2) * BigInt(newCampaign.minInvestment),
+        ],
+      });
+      console.log(result);
+    } catch (e) {
+      console.error(e);
+    }
+
+    try {
+      const result = await writeContractAsync({
+        abi: MockTreasuryFactory,
+        address: factories[chainId],
+        functionName: "createTreasury",
+        args: [
+          newCampaign.minInvestment,
+          newCampaign.endDate,
+          [usdc[chainId]],
+          usdc,
+          newCampaign.minInvestment,
+        ],
+      });
+      console.log(result);
+    } catch (e) {
+      console.error(e);
+    }
+
     addCampaign(newCampaign);
     setFormData(initialFormState);
     setCurrentStep(1);
     setOpen(false);
+
     router.push(`/fund/${newCampaign.id}`);
   };
 
