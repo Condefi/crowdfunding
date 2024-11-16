@@ -1,3 +1,5 @@
+import { Property } from "./property";
+
 export interface Campaign {
   id: string;
   title: string;
@@ -12,6 +14,7 @@ export interface Campaign {
   minInvestment: string;
   term: string;
   type?: "public" | "user";
+  property?: Property;
 }
 
 export type PropertyCampaigns = Campaign[];

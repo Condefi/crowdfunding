@@ -22,7 +22,7 @@ export default function NotFound() {
         className="text-center px-4 md:px-8"
       >
         <h1 className="text-4xl md:text-6xl font-bold mb-4 drop-shadow-2xl text-accent">
-          Page not found
+          Campaign not found
         </h1>
         <motion.p
           initial={{ opacity: 0, y: 20 }}
@@ -30,8 +30,8 @@ export default function NotFound() {
           transition={{ duration: 0.7 }}
           className="text-lg md:text-2xl mb-10 drop-shadow-2xl"
         >
-          We cannot find the page you are looking for.. <br /> If you think this
-          is a bug, please reach out on Discord.
+          We cannot find the campaign you are looking for.. <br /> If you think
+          this is a bug, please reach out on Discord.
         </motion.p>
         <motion.div
           initial={{ opacity: 0, scale: 0.01 }}

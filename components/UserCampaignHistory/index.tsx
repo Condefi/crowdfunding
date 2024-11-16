@@ -10,12 +10,21 @@ import {
 } from "@/components/ui/table";
 import { Campaign } from "@/types/campaign";
 import Link from "next/link";
+import { CampaignStatus } from "../ui/campaign-status";
 
 const UserCampaignHistory = ({
   pastUserCampaigns,
 }: {
   pastUserCampaigns: Campaign[];
 }) => {
+  const getDaysAgo = (endDate: string) => {
+    const end = new Date(endDate);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - end.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return `${diffDays} days ago`;
+  };
+
   return (
     <section>
       <h2 className="text-2xl font-semibold mb-6 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
@@ -59,7 +68,9 @@ const UserCampaignHistory = ({
                   <Link href={`/fund/${campaign.id}`}>{campaign.title}</Link>
                 </TableCell>
                 <TableCell>${campaign.amountRaised}</TableCell>
-                <TableCell>{campaign.status}</TableCell>
+                <TableCell>
+                  <CampaignStatus status={campaign.status} />
+                </TableCell>
                 <TableCell
                   className={`${
                     index === pastUserCampaigns.length - 1
@@ -67,7 +78,10 @@ const UserCampaignHistory = ({
                       : ""
                   }`}
                 >
-                  {campaign.endDate}
+                  <div>{campaign.endDate}</div>
+                  <div className="text-sm text-gray-500">
+                    {getDaysAgo(campaign.endDate)}
+                  </div>
                 </TableCell>
               </TableRow>
             ))}

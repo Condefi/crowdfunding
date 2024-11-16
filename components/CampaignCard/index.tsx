@@ -42,7 +42,7 @@ const CampaignCard = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {title}
           </h3>
-          <CampaignStatus status={status} type={type} />
+          <CampaignStatus status={status} />
         </div>
         <div className="space-y-4">
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
