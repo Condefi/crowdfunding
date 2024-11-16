@@ -2,8 +2,9 @@
 
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
+import { useAccount } from "wagmi";
 import Navbar from "../Navbar";
-import NetworkSwitch from "../NetworkSwitch";
+import NewCampaignModal from "../NewCampaignModal";
 import ThemeSwitch from "../ThemeSwitch";
 import MainLogo from "../ui/logo";
 import { UserModal } from "../UserProfile";
@@ -11,6 +12,7 @@ import { UserModal } from "../UserProfile";
 const Header = () => {
   const [showHeader, setShowHeader] = useState(true);
   const [mounted, setMounted] = useState(false);
+  const { isConnected } = useAccount();
 
   useEffect(() => {
     setMounted(true);
@@ -45,9 +47,11 @@ const Header = () => {
         <div className="flex items-center">
           <div className="flex items-center gap-2">
             <ThemeSwitch />
-            <NetworkSwitch />
           </div>
-          <UserModal />
+          <div className="flex items-center">
+            <UserModal />
+            {isConnected && <NewCampaignModal />}
+          </div>
         </div>
       </div>
     </header>

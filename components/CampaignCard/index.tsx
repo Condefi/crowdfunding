@@ -1,9 +1,11 @@
 "use client";
 
+import PlaceholderImage from "@/assets/properties/placeholder.webp";
 import { cn } from "@/lib/utils";
-import { PropertyCampaign } from "@/types/campaign";
+import { Campaign } from "@/types/campaign";
 import { Calendar, DollarSign, Users } from "lucide-react";
 import Image from "next/image";
+import { CampaignStatus } from "../ui/campaign-status";
 
 const CampaignCard = ({
   imageUrl,
@@ -17,7 +19,7 @@ const CampaignCard = ({
   width = 300,
   height = 300,
   fill = false,
-}: PropertyCampaign & { width?: number; height?: number; fill?: boolean }) => {
+}: Campaign & { width?: number; height?: number; fill?: boolean }) => {
   return (
     <div
       className={cn(
@@ -27,7 +29,7 @@ const CampaignCard = ({
     >
       <div className="relative w-full h-48">
         <Image
-          src={imageUrl}
+          src={imageUrl || PlaceholderImage}
           alt={title}
           {...(fill
             ? { fill: true, className: "object-cover w-full h-full" }
@@ -40,18 +42,7 @@ const CampaignCard = ({
           <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
             {title}
           </h3>
-          <span
-            className={cn(
-              "px-2 py-1 text-xs rounded-full",
-              status === "Completed"
-                ? "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
-                : type === "user"
-                ? "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-100"
-                : "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-            )}
-          >
-            {status}
-          </span>
+          <CampaignStatus status={status} type={type} />
         </div>
         <div className="space-y-4">
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">

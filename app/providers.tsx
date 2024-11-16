@@ -1,3 +1,4 @@
+import { ModalProvider } from "@/components/ui/animated-modal";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { reactQueryClient } from "@/lib/clients/react-query";
 import { wagmiConfig } from "@/lib/clients/wagmi";
@@ -8,7 +9,9 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   return (
     <WagmiProvider config={wagmiConfig}>
       <QueryClientProvider client={reactQueryClient}>
-        <TooltipProvider delayDuration={100}>{children}</TooltipProvider>
+        <ModalProvider>
+          <TooltipProvider delayDuration={100}>{children}</TooltipProvider>
+        </ModalProvider>
       </QueryClientProvider>
     </WagmiProvider>
   );

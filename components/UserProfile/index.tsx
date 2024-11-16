@@ -17,6 +17,7 @@ import { truncateAddress } from "@/lib/utils";
 import { Info } from "lucide-react";
 import Image from "next/image";
 import { useAccount, useConnect, useDisconnect } from "wagmi";
+import NetworkSwitch from "../NetworkSwitch";
 import { Button } from "../ui/button";
 
 export const UserModal = () => {
@@ -70,7 +71,7 @@ const WalletNotConnected = () => {
     <Modal>
       <ModalTrigger>
         <HoverBorderGradient className="text-xs sm:text-sm font-medium text-primary-foreground">
-          <span className="w-auto text-primary z-10 bg-background px-2 sm:px-4 py-2 rounded-[inherit]">
+          <span className="w-auto text-primary z-10 bg-background  py-2 rounded-[inherit]">
             Connect Wallet
           </span>
         </HoverBorderGradient>
@@ -136,6 +137,7 @@ const WalletConnected = () => {
           </div>
           <div className="space-y-4">
             <WalletInfo address={address ?? ""} />
+            <NetworkSwitch />
           </div>
         </ModalContent>
         <ModalFooter className="flex flex-col items-center">

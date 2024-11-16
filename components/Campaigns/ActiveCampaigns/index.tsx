@@ -1,33 +1,38 @@
 "use client";
 
-import Property1 from "@/assets/properties/property-1.avif";
-import Property2 from "@/assets/properties/property-2.avif";
+import {
+  locationAtom,
+  priceRangeAtom,
+  propertyTypeAtom,
+  termAtom,
+} from "@/atoms/discoverAtoms";
 import PropertyCard from "@/components/CampaignCard";
-import { PropertyCampaigns } from "@/types/campaign";
-
+import { useCampaignsStore } from "@/state/useCampaignsStore";
+import { useAtom } from "jotai";
+import Link from "next/link";
 const ActiveCampaigns = () => {
-  const currentCampaigns: PropertyCampaigns = [
-    {
-      id: 1,
-      title: "Campaign 1",
-      imageUrl: Property1.src,
-      status: "Active",
-      amountRaised: 5000,
-      investors: 100,
-      endDate: "2024-01-15",
-      progress: 50,
-    },
-    {
-      id: 2,
-      title: "Campaign 2",
-      imageUrl: Property2.src,
-      status: "Active",
-      amountRaised: 5000,
-      investors: 100,
-      endDate: "2024-01-15",
-      progress: 50,
-    },
-  ];
+  const [priceRange] = useAtom(priceRangeAtom);
+  const [propertyType] = useAtom(propertyTypeAtom);
+  const [location] = useAtom(locationAtom);
+  const [term] = useAtom(termAtom);
+
+  const { currentCampaigns } = useCampaignsStore();
+
+  const filteredCampaigns = currentCampaigns?.filter((campaign) => {
+    const priceInRange =
+      (!priceRange.min || campaign.minInvestment >= priceRange.min) &&
+      (!priceRange.max || campaign.minInvestment <= priceRange.max);
+
+    const matchesPropertyType =
+      propertyType === "all" || campaign.propertyType === propertyType;
+    const matchesLocation =
+      location === "all" || campaign.location === location;
+    const matchesTerm = term === "all" || campaign.term === term;
+
+    return (
+      priceInRange && matchesPropertyType && matchesLocation && matchesTerm
+    );
+  });
 
   return (
     <section className="flex flex-col gap-6">
@@ -36,11 +41,20 @@ const ActiveCampaigns = () => {
           Active Campaigns
         </h2>
       </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {currentCampaigns.map((campaign) => (
-          <PropertyCard key={campaign.id} {...campaign} fill />
-        ))}
-      </div>
+      {filteredCampaigns?.length > 0 ? (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          {filteredCampaigns?.map((campaign) => (
+            <Link href={`/fund/${campaign.id}`} key={campaign.id}>
+              <PropertyCard {...campaign} fill />
+            </Link>
+          ))}
+        </div>
+      ) : (
+        <div className="text-center py-8 text-gray-500">
+          No campaigns found matching your filters. Try adjusting your search
+          criteria.
+        </div>
+      )}
     </section>
   );
 };

@@ -66,14 +66,14 @@ export default function ImageInputPreview({
 
   return (
     <div className="w-full">
-      {file && previewUrl ? (
+      {previewUrl ? (
         <div className="space-y-2">
           <Image
             src={previewUrl}
             width={width}
             height={height}
             alt="Preview"
-            className="object-cover"
+            className="object-cover rounded-lg"
             onLoad={() => {
               if (previewUrl) {
                 URL.revokeObjectURL(previewUrl);
@@ -83,7 +83,7 @@ export default function ImageInputPreview({
 
           <div className="flex items-center justify-between rounded-md bg-accent px-4 py-2">
             <div className="truncate text-sm font-medium text-white">
-              {file.name}
+              {file?.name || "Uploaded file"}
             </div>
 
             <div className="flex items-center gap-3 p-2 ">

@@ -1,67 +1,33 @@
-export interface PropertyOverview {
-  price: number;
-  location: {
-    building: string;
-    area: string;
-    city: string;
+export type Property = {
+  id: number;
+  campaignId: string;
+  name: string;
+  description: string;
+  image: string;
+  external_url: string;
+  attributes: {
+    trait_type: string;
+    value: string | number;
+    unit?: string;
+  }[];
+  properties: {
+    amenities: string[];
+    building_stats: {
+      height: number;
+      floors: number;
+      total_units: number;
+      retail_centers: number;
+      elevators: number;
+    };
+    investment_metrics: {
+      projected_roi: number;
+      projected_occupancy: number;
+      projection_period: number;
+    };
   };
-  propertyType: string;
-  size: number; // in sqft
-  ownership: string;
-}
-
-export interface PropertyHighlights {
-  buildingHeight: number; // in meters
-  amenities: string[];
-  awards: string[];
-  designedBy: string;
-}
-
-export interface InvestmentDetails {
-  handover: string;
-  estimatedROI: {
-    percentage: number;
-    years: number;
-    occupancy: number;
+  treasury: {
+    minDeposit: number;
+    maxDeposit: number;
+    deadline: number;
   };
-  management: string;
-  managementType: string;
-}
-
-export interface PropertyFeatures {
-  floor: string;
-  features: string[];
-}
-
-export interface ProjectDetails {
-  developer: string;
-  status: string;
-  completionDate: string;
-  plotNumber: string;
-  totalUnits: number;
-  totalFloors: number;
-  facilities: {
-    retailCenters: number;
-    swimmingPools: number;
-    officeSpaces: number;
-    elevators: number;
-  };
-}
-
-export interface ValidationInfo {
-  referenceNumber: string;
-  truCheckDate: Date;
-  inspectionDate: Date;
-}
-
-export interface Property {
-  id: string;
-  overview: PropertyOverview;
-  highlights: PropertyHighlights;
-  investmentDetails: InvestmentDetails;
-  features: PropertyFeatures;
-  projectDetails: ProjectDetails;
-  validation: ValidationInfo;
-}
-
-export type Properties = Property[];
+};
