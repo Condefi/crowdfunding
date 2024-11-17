@@ -4,7 +4,6 @@ import {
   locationAtom,
   priceRangeAtom,
   propertyTypeAtom,
-  termAtom,
 } from "@/atoms/discoverAtoms";
 import PropertyCard from "@/components/CampaignCard";
 import { useCampaignsStore } from "@/state/useCampaignsStore";
@@ -14,7 +13,6 @@ const ActiveCampaigns = () => {
   const [priceRange] = useAtom(priceRangeAtom);
   const [propertyType] = useAtom(propertyTypeAtom);
   const [location] = useAtom(locationAtom);
-  const [term] = useAtom(termAtom);
 
   const { currentCampaigns } = useCampaignsStore();
 
@@ -27,11 +25,8 @@ const ActiveCampaigns = () => {
       propertyType === "all" || campaign.propertyType === propertyType;
     const matchesLocation =
       location === "all" || campaign.location === location;
-    const matchesTerm = term === "all" || campaign.term === term;
 
-    return (
-      priceInRange && matchesPropertyType && matchesLocation && matchesTerm
-    );
+    return priceInRange && matchesPropertyType && matchesLocation;
   });
 
   return (

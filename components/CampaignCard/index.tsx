@@ -12,7 +12,7 @@ const CampaignCard = ({
   title,
   status,
   amountRaised,
-  investors,
+  amountToRaise,
   endDate,
   progress,
   type = "public",
@@ -57,12 +57,12 @@ const CampaignCard = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
               <DollarSign className="h-4 w-4 mr-2" />$
-              {amountRaised.toLocaleString()}{" "}
+              {amountRaised?.toLocaleString()}{" "}
               {type === "user" ? "contributed" : "raised"}
             </div>
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">
               <Users className="h-4 w-4 mr-2" />
-              {investors} investors
+              {amountToRaise?.toLocaleString()} to raise
             </div>
           </div>
           <div className="flex items-center text-sm text-gray-600 dark:text-gray-300">

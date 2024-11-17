@@ -18,9 +18,9 @@ import { useWeb3Auth } from "@/hooks/user/useWeb3Auth";
 import { truncateAddress } from "@/lib/utils";
 import { Info } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-import { Address } from "viem";
+import { useEffect } from "react";
 import { useAccount, useDisconnect } from "wagmi";
+import { useUserStore } from "../../state/userStore";
 import NetworkSwitch from "../NetworkSwitch";
 import { Button } from "../ui/button";
 
@@ -35,24 +35,15 @@ export const UserModal = () => {
 };
 
 const WalletInfo = ({ address }: { address: string }) => {
-  const [smartAccountAddress, setSmartAccountAddress] =
-    useState<Address | null>(null);
-  const [isSmartAccount, setIsSmartAccount] = useState<boolean>(false);
+  const { smartAccountAddress, isSmartAccount, initializeSmartAccount } =
+    useUserStore();
   const { connector } = useAccount();
 
   useEffect(() => {
-    const getAccounts = async () => {
-      if (connector) {
-        const accts = await connector.getAccounts();
-
-        if (accts.length > 0) {
-          setSmartAccountAddress(accts[0]);
-          setIsSmartAccount(true);
-        }
-      }
-    };
-    getAccounts();
-  }, [connector]);
+    if (connector && !smartAccountAddress) {
+      initializeSmartAccount(connector);
+    }
+  }, [connector, smartAccountAddress, initializeSmartAccount]);
 
   const items = [
     {
@@ -63,7 +54,7 @@ const WalletInfo = ({ address }: { address: string }) => {
           : "Loading..."
         : truncateAddress(address),
       tooltip: isSmartAccount
-        ? "Your Smart Contract Wallet address"
+        ? "Your Smart Account contract address"
         : "Your wallet address",
       showTooltip: true,
     },
@@ -173,7 +164,18 @@ const WalletConnected = () => {
               <p className="text-sm text-gray-500">
                 We have connected your account with Web3Auth social login and
                 integrated Smart Account. All transactions are gasless since the
-                Paymaster will cover the gas fees for your transactions.
+                Paymaster will cover the gas fees for your transactions.{" "}
+                <span
+                  className="text-blue-500 underline cursor-pointer"
+                  onClick={() => {
+                    window.open(
+                      "https://web3auth.io/docs/features/account-abstraction",
+                      "_blank"
+                    );
+                  }}
+                >
+                  Read more
+                </span>
               </p>
             </div>
           </div>

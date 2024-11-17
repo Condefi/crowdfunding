@@ -4,17 +4,23 @@
  */
 
 import { createConfig, http } from "wagmi";
-import { base, mantle, scroll } from "wagmi/chains";
+import { baseSepolia, mantleSepoliaTestnet, scrollSepolia } from "wagmi/chains";
 import Web3AuthConnectorInstance from "../web3auth/web3auth";
 
 export const wagmiConfig = createConfig({
-  chains: [mantle, scroll, base],
+  chains: [mantleSepoliaTestnet, scrollSepolia, baseSepolia],
   transports: {
-    [mantle.id]: http(),
-    [scroll.id]: http(),
-    [base.id]: http(),
+    [mantleSepoliaTestnet.id]: http(),
+    [scrollSepolia.id]: http(),
+    [baseSepolia.id]: http(),
   },
-  connectors: [Web3AuthConnectorInstance([mantle, scroll, base])],
+  connectors: [
+    Web3AuthConnectorInstance([
+      mantleSepoliaTestnet,
+      scrollSepolia,
+      baseSepolia,
+    ]),
+  ],
   // Enable state persistence between page reloads
   ssr: true,
 });

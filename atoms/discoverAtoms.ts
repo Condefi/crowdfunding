@@ -15,5 +15,3 @@ export const propertyTypeAtom = atom<string>("all");
 export const locationAtom = atom<string>("all");
 
 export const searchAtom = atom<string>("");
-
-export const termAtom = atom<string>("all");

@@ -82,7 +82,7 @@ const UserCampaignHistory = ({
                 >
                   <div>{campaign.endDate}</div>
                   <div className="text-sm text-gray-500">
-                    {getDaysAgo(campaign.endDate)}
+                    {getDaysAgo(campaign.endDate.toString())}
                   </div>
                 </TableCell>
               </TableRow>
