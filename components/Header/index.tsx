@@ -50,7 +50,7 @@ const Header = () => {
           </div>
           <div className="flex items-center">
             <UserModal />
-            {isConnected && <NewCampaignModal />}
+            <NewCampaignModal />
           </div>
         </div>
       </div>
